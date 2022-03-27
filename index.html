@@ -6,8 +6,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CHECK</title>
 </head>
+<style>
+  .r {
+    margin-top: 50px;
+  }
+  .c {
+    text-align: center;
+    line-height: 70vh;
+  }
+</style>
+<script>
+    addEventListener("error", (e) => {
+      document.getElementById("error").innerText("出现了一点小问题 Σ(⊙▽⊙|||a")
+    })
+</script>
 <body>
-  <h3 id="content"></h3>
+  <h3 class="c" id="content"></h3>
+  <p class="r" id="error"></p>
 
   <script>
     function setContent(text) {
@@ -31,13 +46,22 @@
       return map
     }
 
-    function matchType(type, content) {
+    function getVersionJson() {
+      return new Promise((resolve) => {
+        fetch(location.origin + (location.pathname.includes("check-version") ? "check-version" : "") + '/v.json')
+          .then(response => response.json())
+          .then(data => resolve(data));
+      })
+    }
+
+    async function matchType(type, content) {
       const _type = atob(type);
       const _content = atob(content);
+      const versions = await getVersionJson()
 
       switch(_type) {
         case "resume": {
-          return new Date(_content) === new Date("2022-03-28") ? "是最新版本的简历" : "不是最新版本的简历"
+          return new Date(_content) === new Date(versions.resume) ? "是最新版本的简历" : "不是最新版本的简历"
         }
         default: {
           return "请求的数据有误"
@@ -45,7 +69,7 @@
       }
     }
 
-    function runner() {
+    async function runner() {
       const search = location.search.slice(1);
 
       if (!search) {
@@ -55,7 +79,7 @@
 
       const { t, v } = analysisQuery(search);
 
-      setContent(matchType(t, v))
+      setContent(await matchType(t, v))
     }
 
     runner()
