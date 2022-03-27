@@ -61,7 +61,7 @@
 
       switch(_type) {
         case "resume": {
-          return new Date(_content) === new Date(versions.resume) ? "是最新版本的简历" : "不是最新版本的简历"
+          return _content === versions.resume ? "是最新版本的简历" : "不是最新版本的简历"
         }
         default: {
           return "请求的数据有误"
