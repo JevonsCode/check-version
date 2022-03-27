@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHECK</title>
+</head>
+<body>
+  <h3 id="content"></h3>
+
+  <script>
+    function setContent(text) {
+      const content = document.getElementById("content");
+      content && (content.innerText = text);
+    }
+
+    function analysisQuery(search) {
+      const map = {}
+
+      const queryList = search.split("&");
+      for(let i = 0; i < queryList.length; i++) {
+        const currentQuery = queryList[i];
+        const [key, ...values] = currentQuery.split("=")
+        const value = values.join("")
+        if (key && value) {
+          map[key] = value
+        }
+      }
+
+      return map
+    }
+
+    function matchType(type, content) {
+      const _type = atob(type);
+      const _content = atob(content);
+
+      switch(_type) {
+        case "resume": {
+          return new Date(_content) === new Date("2022-03-28") ? "是最新版本的简历" : "不是最新版本的简历"
+        }
+        default: {
+          return "请求的数据有误"
+        }
+      }
+    }
+
+    function runner() {
+      const search = location.search.slice(1);
+
+      if (!search) {
+        setContent("无效的查询！")
+        return false
+      }
+
+      const { t, v } = analysisQuery(search);
+
+      setContent(matchType(t, v))
+    }
+
+    runner()
+  </script>
+</body>
+</html>
