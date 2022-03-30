@@ -7,22 +7,87 @@
   <title>CHECK</title>
 </head>
 <style>
-  .r {
-    margin-top: 50px;
+  body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-  .c {
-    text-align: center;
-    line-height: 70vh;
+
+  .content {
+    line-height: 80px;
+    font-size: 30px;
+    padding: 20px;
+  }
+
+  .container {
+    margin-top: -40px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .svg {
+    display: none;
+  }
+  
+  .circle {
+    stroke-dasharray: 1194;
+    stroke-dashoffset: 1194;
+  }
+
+  .circle-ani {
+    animation: circle 1s ease-in-out;
+    animation-fill-mode: forwards;
+  }
+
+  .tick-ani {
+    animation: tick .8s ease-out;
+    animation-fill-mode: forwards;
+    animation-delay: .95s;
+  }
+
+  .tick {
+    stroke-dasharray: 350;
+    stroke-dashoffset: 350;
+  }
+
+  @keyframes circle {
+    from {
+      stroke-dashoffset: 1194;
+    }
+    to {
+      stroke-dashoffset: 2388;
+    }
+  }
+
+  @keyframes tick {
+    from {
+      stroke-dashoffset: 350;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
   }
 </style>
 <script>
     addEventListener("error", (e) => {
-      document.getElementById("error").innerText("出现了一点小问题 Σ(⊙▽⊙|||a")
+      alert("出现了一点小问题 Σ(⊙▽⊙|||a")
     })
 </script>
 <body>
-  <h3 class="c" id="content"></h3>
-  <p class="r" id="error"></p>
+  <div class="container">
+    <svg class="svg" width="400" height="400">
+      <circle fill="none" stroke="#68E534" stroke-width="20" cx="200" cy="200" r="190" class="circle" stroke-linecap="round" transform="rotate(-90 200 200) "/>
+      <polyline fill="none" stroke="#68E534" stroke-width="24" points="88,214 173,284 304,138" stroke-linecap="round" stroke-linejoin="round" class="tick" />
+    </svg>
+    <span class="content" id="content">......</span>
+  </div>
 
   <script>
     function setContent(text) {
@@ -61,12 +126,13 @@
 
       switch(_type) {
         case "resume": {
-          return _content === versions.resume ? "是最新版本的简历" : "不是最新版本的简历"
+          return _content === versions.resume ? successMatch : failMatch
         }
         default: {
           return "请求的数据有误"
         }
       }
+
     }
 
     async function runner() {
@@ -79,7 +145,28 @@
 
       const { t, v } = analysisQuery(search);
 
-      setContent(await matchType(t, v))
+      const r = await matchType(t, v)
+
+      if (typeof r === "string") {
+        setContent(r)
+      }
+
+      r()
+    }
+
+    function successMatch() {
+      const svg = document.querySelector(".svg");
+      const circle = document.querySelector(".circle");
+      const tick = document.querySelector(".tick");
+      svg.style.display = 'block';
+      circle.classList.add("circle-ani");
+      tick.classList.add("tick-ani");
+
+      setContent("是最新版本 (ﾟ▽ﾟ)/")
+    }
+
+    function failMatch() {
+      setContent("❌ 不是最新版本\n请麻烦联系微信或邮箱更新文件 Thanks♪(･ω･)ﾉ")
     }
 
     runner()
