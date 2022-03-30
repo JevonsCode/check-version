@@ -132,7 +132,7 @@
           return _content === versions.resume ? successMatch : failMatch
         }
         default: {
-          return "请求的数据有误"
+          return "🎲 请求的数据有误"
         }
       }
 
@@ -142,7 +142,7 @@
       const search = location.search.slice(1);
 
       if (!search) {
-        setContent("无效的查询！")
+        setContent("🤔 无效的查询！")
         return false
       }
 
