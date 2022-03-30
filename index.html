@@ -76,9 +76,12 @@
   }
 </style>
 <script>
-    addEventListener("error", (e) => {
-      alert("出现了一点小问题 Σ(⊙▽⊙|||a")
-    })
+  addEventListener("unhandledrejection", () => { 
+    alert("出现了一点小问题 Σ(⊙▽⊙|||a")
+  });
+  addEventListener("error", () => {
+    alert("出现了一点小问题 Σ(⊙▽⊙|||a")
+  })
 </script>
 <body>
   <div class="container">
