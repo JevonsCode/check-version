@@ -1,80 +1,213 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CHECK</title>
-</head>
-<style>
-  body {
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  <title>简历版本检查</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="gsap.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  .content {
-    line-height: 80px;
-    font-size: 30px;
-    padding: 20px;
-  }
+    :root {
+      --primary: #4CAF50;
+      --primary-light: #68E534;
+      --error: #F44336;
+      --text: #2c3e50;
+      --background: #f8f9fa;
+      --card-bg: #ffffff;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
 
-  .container {
-    margin-top: -40px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+    body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Noto Sans SC', sans-serif;
+      background-color: var(--background);
+      background-image: radial-gradient(#e8e8e8 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: var(--text);
+      overflow: hidden;
+    }
 
-  .svg {
-    display: none;
-  }
-  
-  .circle {
-    stroke-dasharray: 1194;
-    stroke-dashoffset: 1194;
-  }
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 90%;
+      max-width: 480px;
+      padding: 40px 30px;
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(20px);
+    }
 
-  .circle-ani {
-    animation: circle 1s ease-in-out;
-    animation-fill-mode: forwards;
-  }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
 
-  .tick-ani {
-    animation: tick .8s ease-out;
-    animation-fill-mode: forwards;
-    animation-delay: .95s;
-  }
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
 
-  .tick {
-    stroke-dasharray: 350;
-    stroke-dashoffset: 350;
-  }
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 30px;
+    }
 
-  @keyframes circle {
-    from {
+    .svg-container {
+      width: 180px;
+      height: 180px;
+      position: relative;
+      margin-bottom: 30px;
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    .svg {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .circle {
+      stroke-dasharray: 1194;
       stroke-dashoffset: 1194;
     }
-    to {
-      stroke-dashoffset: 2388;
-    }
-  }
 
-  @keyframes tick {
-    from {
+    .tick {
+      stroke-dasharray: 350;
       stroke-dashoffset: 350;
     }
-    to {
-      stroke-dashoffset: 0;
+
+    .content {
+      font-size: 22px;
+      font-weight: 500;
+      text-align: center;
+      margin: 10px 0 30px;
+      min-height: 60px;
+      opacity: 0;
     }
-  }
-</style>
+
+    .contact {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+      width: 100%;
+      opacity: 0;
+    }
+
+    .contact-title {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .wechat {
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .wechat-icon {
+      width: 28px;
+      height: 28px;
+      margin-right: 10px;
+      fill: #07c160;
+    }
+
+    .wechat-id {
+      font-weight: 500;
+      background-color: #f0f9f0;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px dashed var(--primary);
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .wechat-id:hover {
+      background-color: #e0f2e0;
+    }
+
+    .tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-bottom: 8px;
+      background: #333;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      white-space: nowrap;
+    }
+
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #333 transparent transparent transparent;
+    }
+
+    .error-message {
+      color: var(--error);
+    }
+
+    .success-message {
+      color: var(--primary);
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 30px 20px;
+      }
+      
+      .title {
+        font-size: 24px;
+      }
+      
+      .content {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
 <script>
   addEventListener("unhandledrejection", () => { 
     alert("出现了一点小问题 Σ(⊙▽⊙|||a")
@@ -84,20 +217,58 @@
   })
 </script>
 <body>
-  <div class="container">
-    <svg class="svg" width="400" height="400">
-      <circle fill="none" stroke="#68E534" stroke-width="20" cx="200" cy="200" r="190" class="circle" stroke-linecap="round" transform="rotate(-90 200 200) "/>
-      <polyline fill="none" stroke="#68E534" stroke-width="24" points="88,214 173,284 304,138" stroke-linecap="round" stroke-linejoin="round" class="tick" />
-    </svg>
-    <span class="content" id="content">......</span>
+  <div class="card" id="card">
+    <div class="header">
+      <h1 class="title">简历版本检查</h1>
+      <p class="subtitle">Resume Version Verification</p>
+    </div>
+    
+    <div class="svg-container" id="svg-container">
+      <svg class="svg" viewBox="0 0 400 400">
+        <circle fill="none" stroke="#68E534" stroke-width="20" cx="200" cy="200" r="190" class="circle" stroke-linecap="round" transform="rotate(-90 200 200)"/>
+        <polyline fill="none" stroke="#68E534" stroke-width="24" points="88,214 173,284 304,138" stroke-linecap="round" stroke-linejoin="round" class="tick" />
+      </svg>
+    </div>
+    
+    <div class="content" id="content">
+      <div class="loading-dots">
+        <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+      </div>
+    </div>
+    
+    <div class="contact" id="contact">
+      <p class="contact-title">如需更新，请联系我：</p>
+      <div class="wechat">
+        <svg class="wechat-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M690.1 377.4c5.9 0 11.8 0.2 17.6 0.5-24.4-128.7-158.3-227.1-319.9-227.1C209 150.8 64 271.4 64 420.2c0 81.1 43.6 154.2 111.9 203.6 5.5 3.9 9.1 10.3 9.1 17.6 0 2.4-0.5 4.6-1.1 6.9-5.5 20.3-14.2 52.8-14.6 54.3-0.7 2.6-1.7 5.2-1.7 7.9 0 5.9 4.8 10.8 10.8 10.8 2.3 0 4.2-0.9 6.2-2l70.9-40.9c5.3-3 11-5 17.2-5 3.2 0 6.4 0.5 9.5 1.4 33.1 9.5 68.8 14.8 105.7 14.8 6 0 11.9-0.1 17.8-0.4-7.1-21-10.9-43.1-10.9-66 0-135.8 132.2-245.8 295.3-245.8z m-194.3-86.5c23.8 0 43.2 19.3 43.2 43.1s-19.3 43.1-43.2 43.1c-23.8 0-43.2-19.3-43.2-43.1s19.4-43.1 43.2-43.1z m-215.9 86.2c-23.8 0-43.2-19.3-43.2-43.1s19.3-43.1 43.2-43.1 43.2 19.3 43.2 43.1-19.4 43.1-43.2 43.1z" p-id="9773"></path>
+          <path d="M866.7 792.7c56.9-41.2 93.2-102 93.2-169.7 0-124-120.8-224.5-269.9-224.5-149 0-269.9 100.5-269.9 224.5S540.9 847.5 690 847.5c30.8 0 60.6-4.4 88.1-12.3 2.6-0.8 5.2-1.2 7.9-1.2 5.2 0 9.9 1.6 14.3 4.1l59.1 34c1.7 1 3.3 1.7 5.2 1.7 5 0 9.3-4.1 9.3-9.1 0-2.2-0.8-4.3-1.4-6.5-3.7-14.1-9.9-37.7-12.4-47.1-0.5-2-0.9-3.9-0.9-5.9 0-6.1 2.9-11.3 7.5-14.5z m-236.9-186.5c-19.8 0-35.9-16.1-35.9-35.9s16.1-35.9 35.9-35.9 35.9 16.1 35.9 35.9-16.1 35.9-35.9 35.9z m179.9 0c-19.8 0-35.9-16.1-35.9-35.9s16.1-35.9 35.9-35.9 35.9 16.1 35.9 35.9-16.1 35.9-35.9 35.9z" p-id="9774"></path>
+        </svg>
+        <div class="wechat-id" id="wechat-id">
+          jvs-code-work
+          <span class="tooltip" id="tooltip">点击复制微信号</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    function setContent(text) {
+    /** 设置内容文本 */
+    function setContent(text, isError = false) {
       const content = document.getElementById("content");
-      content && (content.innerText = text);
+      if (!content) return;
+      
+      content.innerHTML = text;
+      
+      if (isError) {
+        content.classList.add("error-message");
+        content.classList.remove("success-message");
+      } else {
+        content.classList.add("success-message");
+        content.classList.remove("error-message");
+      }
     }
 
+    /** 解析URL查询参数 */
     function analysisQuery(search) {
       const map = {}
 
@@ -114,6 +285,7 @@
       return map
     }
 
+    /** 获取版本信息 */
     function getVersionJson() {
       return new Promise((resolve) => {
         fetch(location.origin + (location.pathname.includes("check-version") ? "/check-version" : "") + '/v.json')
@@ -122,6 +294,7 @@
       })
     }
 
+    /** 匹配类型并返回结果 */
     async function matchType(type, content) {
       const _type = atob(type);
       const _content = atob(content);
@@ -135,44 +308,195 @@
           return "🎲 请求的数据有误"
         }
       }
-
     }
 
+    /** 主函数 */
     async function runner() {
       const search = location.search.slice(1);
 
       if (!search) {
-        setContent("🤔 无效的查询！")
-        return false
+        setContent("🤔 无效的查询！", true);
+        return false;
       }
 
       const { t, v } = analysisQuery(search);
 
-      const r = await matchType(t, v)
-
-      if (typeof r === "string") {
-        setContent(r)
+      if (!t || !v) {
+        setContent("🤔 无效的查询参数！", true);
+        return false;
       }
 
-      r()
+      const r = await matchType(t, v);
+
+      if (typeof r === "string") {
+        setContent(r, true);
+      } else {
+        r();
+      }
     }
 
+    /** 成功匹配动画 */
     function successMatch() {
-      const svg = document.querySelector(".svg");
+      const svgContainer = document.getElementById("svg-container");
       const circle = document.querySelector(".circle");
       const tick = document.querySelector(".tick");
-      svg.style.display = 'block';
-      circle.classList.add("circle-ani");
-      tick.classList.add("tick-ani");
-
-      setContent("是最新版本 (ﾟ▽ﾟ)/")
+      
+      // 显示SVG
+      svgContainer.style.opacity = 1;
+      
+      // 使用GSAP动画
+      gsap.to(circle, {
+        strokeDashoffset: 2388,
+        duration: 0.8,
+        ease: "power2.inOut"
+      });
+      
+      gsap.to(tick, {
+        strokeDashoffset: 0,
+        duration: 0.6,
+        delay: 0.7,
+        ease: "power2.out",
+        onComplete: () => {
+          // 设置成功文本
+          setContent("✅ 是最新版本 <br> <span style='font-size: 16px; opacity: 0.8;'>(ﾟ▽ﾟ)/</span>");
+          
+          // 文本淡入动画
+          gsap.to("#content", {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out"
+          });
+          
+          // 联系信息淡入
+          gsap.to("#contact", {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            delay: 0.2,
+            ease: "power2.out"
+          });
+        }
+      });
     }
 
+    /** 失败匹配动画 */
     function failMatch() {
-      setContent("❌ 不是最新版本\n请麻烦联系微信或邮箱更新文件 Thanks♪(･ω･)ﾉ")
+      const svgContainer = document.getElementById("svg-container");
+      
+      // 隐藏SVG，显示错误信息
+      gsap.to(svgContainer, {
+        opacity: 0,
+        scale: 0.9,
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: () => {
+          svgContainer.style.display = 'none';
+          
+          // 设置失败文本
+          setContent("❌ 不是最新版本<br><span style='font-size: 16px; opacity: 0.8;'>请联系我更新文件 Thanks♪(･ω･)ﾉ</span>", true);
+          
+          // 文本淡入动画
+          gsap.to("#content", {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out"
+          });
+          
+          // 联系信息淡入
+          gsap.to("#contact", {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            delay: 0.2,
+            ease: "power2.out"
+          });
+        }
+      });
     }
 
-    runner()
+    /** 微信号复制功能 */
+    function setupWechatCopy() {
+      const wechatId = document.getElementById('wechat-id');
+      const tooltip = document.getElementById('tooltip');
+      
+      if (wechatId) {
+        wechatId.addEventListener('click', () => {
+          navigator.clipboard.writeText('jvs-code-work').then(() => {
+            tooltip.textContent = '已复制!';
+            tooltip.style.opacity = '1';
+            
+            setTimeout(() => {
+              tooltip.style.opacity = '0';
+              setTimeout(() => {
+                tooltip.textContent = '点击复制微信号';
+              }, 300);
+            }, 1500);
+          }).catch(err => {
+            console.error('复制失败:', err);
+          });
+        });
+        
+        wechatId.addEventListener('mouseenter', () => {
+          tooltip.style.opacity = '1';
+        });
+        
+        wechatId.addEventListener('mouseleave', () => {
+          if (tooltip.textContent !== '已复制!') {
+            tooltip.style.opacity = '0';
+          }
+        });
+      }
+    }
+
+    /** 页面加载动画 */
+    function initAnimation() {
+      // 初始化加载动画
+      gsap.to(".dot", {
+        y: -10,
+        stagger: 0.2,
+        repeat: -1,
+        yoyo: true,
+        duration: 0.4
+      });
+      
+      // 卡片入场动画
+      gsap.to("#card", {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        onComplete: () => {
+          // 执行主逻辑
+          runner();
+        }
+      });
+      
+      // SVG容器预设
+      gsap.set("#svg-container", {
+        opacity: 0,
+        scale: 0.8
+      });
+      
+      // 内容文本预设
+      gsap.set("#content", {
+        opacity: 0,
+        y: 10
+      });
+      
+      // 联系信息预设
+      gsap.set("#contact", {
+        opacity: 0,
+        y: 10
+      });
+    }
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', () => {
+      initAnimation();
+      setupWechatCopy();
+    });
   </script>
 </body>
 </html>
